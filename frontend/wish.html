@@ -1,0 +1,33 @@
+<!--
+Test	                                Result
+Enter ball	                            Backend received: ball
+Request an incorrect endpoint	        HTTP 404 error
+Send only spaces to the backend	        HTTP 400 with Must enter an object
+Stop the backend	                    Connection-failure message-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISH - Create Object</title>
+</head>
+
+<body>
+    <input type="text" placeholder="Please tell me what object you want " id="takeObject" required>
+    <button id="createObjectBtn">Create
+        Object</button>
+    <h2 id="message"></h2>
+
+        <!--A Canvas gives JavaScript a rectangular area where it can draw 2-D shapes using coordinates.-->
+    <canvas id="sketchCanvas" width="400" height="400"></canvas>
+
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js"></script>
+    <!--type="module" allows wish.js to import the Three.js library using modern JavaScript syntax.-->
+    <script type="module" src="wish.js"></script>
+</body>
+
+</html>
