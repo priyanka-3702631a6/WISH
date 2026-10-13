@@ -1,7 +1,9 @@
 //lookup object for dynamic function
 const drawings = {
     ball: drawBall,
-    house: drawHouse
+    house: drawHouse,
+    tree: drawTree,
+    star: drawStar
 };
 
 
@@ -19,7 +21,9 @@ function createObject() {
                     // Handle unsuccessful HTTP responses
                     if (!response.ok) {
                         //The server responds, but the status is unsuccessful, such as 404.
-                        throw new Error("HTTP " + response.status + ": " + data.detail);
+                        const error = new Error("HTTP " + response.status + ": " + data.detail);
+                        error.name = "HttpError";
+                        throw error;
                     }
                     //return the Promise produced by response.json().
                     return data;
@@ -46,12 +50,15 @@ function createObject() {
             //.catch() can handle a failed connection, but it won't automatically handle every unsuccessful HTTP response. 
             .catch(error => {
                 //all status code except  in the successful 200–299 range even 404
-                if (error.message.startsWith("HTTP ")) {
+                if (error.name === "HttpError") {
                     message.textContent = "Request failed: " + error.message;
                 }
-                //fastapi stopped 
-                else {
+                //fastapi stopped but TypeError isn't exclusive to network failures. For example, some JavaScript bugs can also produce a TypeError
+                else if (error instanceof TypeError) {
                     message.textContent = "Cannot connect to WISH. Please try again.";
+                } else {
+                    message.textContent = "Something went wrong in WISH. Please try again.";
+                    console.error(error);
                 }
             });
 
@@ -117,4 +124,34 @@ function drawHouse() {
     //add window
     ctx.fillStyle = "#f6eeee";
     ctx.fillRect(22, 65, 15, 15);
+}
+
+function drawTree() {
+
+    //Green triangular canopy
+    ctx.beginPath();
+    ctx.moveTo(50, 50);
+    ctx.lineTo(10, 150);
+    ctx.lineTo(90, 150);
+    ctx.closePath();
+    ctx.fillStyle = "#0ce10c";
+    ctx.fill();
+
+    //Brown rectangular trunk
+    ctx.fillStyle = "#b6350a";
+    ctx.fillRect(40, 150, 20, 70)
+
+}
+
+function drawStar() {
+
+    ctx.beginPath();
+    ctx.moveTo(200, 100);
+    ctx.lineTo(225, 175);
+    ctx.lineTo(300, 175);
+    ctx.lineTo(240, 220);
+    ctx.lineTo(260, 290);
+    ctx.closePath();
+    ctx.fillStyle = "#c1e10c";
+    ctx.fill();
 }
