@@ -30,9 +30,8 @@ function createObject() {
                 });
             })
 
-            //data represents the parsed JSON response i.e It is the JSON response after JavaScript parses it using response.json().
+            // data is the parsed JSON response.
             .then(data => {
-                message.textContent = "Backend received: " + data.object;
 
                 // it's cleared after a successful backend response, before WISH checks whether the object is supported.
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -41,6 +40,7 @@ function createObject() {
                 const drawFunction = drawings[objectName];
 
                 if (drawFunction !== undefined) {
+                    message.textContent = "Backend received: " + data.object;
                     drawFunction();
                 } else {
                     message.textContent = "Sorry, WISH doesn't support this object yet.";
@@ -64,6 +64,8 @@ function createObject() {
 
 
     } else {
+        //clearing the previous canvas if there 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         message.textContent = "You haven't entered an Object";
 
     }
