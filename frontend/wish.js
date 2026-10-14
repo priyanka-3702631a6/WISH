@@ -7,10 +7,17 @@ const drawings = {
 };
 
 
+const objectInput = document.getElementById("takeObject");
+const message = document.getElementById("message");
+
+//Find the drawing area
+const canvas = document.getElementById("sketchCanvas");
+//getContext("2d") gives us the tools to draw shapes, lines, and other graphics inside the Canvas. We store those tools in ctx, short for context.
+const ctx = canvas.getContext("2d");
+
 //displaying what you entered in input box
 function createObject() {
-    const obj = document.getElementById("takeObject").value.trim();
-    const message = document.getElementById("message");
+    const obj = objectInput.value.trim();
     if (obj !== "") {
 
 
@@ -73,12 +80,6 @@ function createObject() {
 
 //calling the createObject() on click of the btn 
 document.getElementById("createObjectBtn").addEventListener("click", createObject);
-
-//Find the drawing area
-const canvas = document.getElementById("sketchCanvas");
-
-//getContext("2d") gives us the tools to draw shapes, lines, and other graphics inside the Canvas. We store those tools in ctx, short for context.
-const ctx = canvas.getContext("2d");
 
 
 
