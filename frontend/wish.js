@@ -43,15 +43,8 @@ function createObject() {
                 // it's cleared after a successful backend response, before WISH checks whether the object is supported.
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                const objectName = data.object.toLowerCase();
-                const drawFunction = drawings[objectName];
+                displayObject(data.object.toLowerCase());
 
-                if (drawFunction !== undefined) {
-                    message.textContent = "Backend received: " + data.object;
-                    drawFunction();
-                } else {
-                    message.textContent = "Sorry, WISH doesn't support this object yet.";
-                }
             })
 
             //.catch() can handle a failed connection, but it won't automatically handle every unsuccessful HTTP response. 
@@ -75,6 +68,17 @@ function createObject() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         message.textContent = "You haven't entered an Object";
 
+    }
+}
+
+function displayObject(objectName) {
+    const drawFunction = drawings[objectName];
+
+    if (drawFunction !== undefined) {
+        message.textContent = "Backend received: " + objectName;
+        drawFunction();
+    } else {
+        message.textContent = "Sorry, WISH doesn't support this object yet.";
     }
 }
 
