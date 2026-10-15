@@ -94,20 +94,71 @@ function interpretObject(objectName) {
 }
 
 
+function interpretDescription(description) {
+    const objects = description.split(" and ");
+
+    //map() runs interpretObject() on each description and result is an array of structured instructions.
+    return objects.map(objectName => interpretObject(objectName.trim()));
+}
+
 
 function displayObject(objectName) {
-    const instructions = interpretObject(objectName);
+    const instructions = interpretDescription(objectName);
 
-    const shape = instructions.object;
-    const color = instructions.color;
+    let displayedObjects = [];
+    let limitReached = false;
 
-    if (drawings[shape] !== undefined) {
-        message.textContent = "Backend received: " + objectName;
-        drawings[shape](color);
-    } else {
-        message.textContent = "Sorry, WISH doesn't support this object yet.";
+    const positions = [
+        { x: 100, y: 100 },
+        { x: 300, y: 100 },
+        { x: 100, y: 300 },
+        { x: 300, y: 300 }
+    ];
+
+
+    //instructions.entries() gives us both the index and the object:
+    for (const [index, item] of instructions.entries()) {
+        const shape = item.object;
+        const color = item.color;
+
+
+        //To get rid of positions[index] undefined if the user enters a fifth object.
+        if (index >= positions.length) {
+
+            limitReached = true;
+            break;
+        }
+        const x = positions[index].x;
+        const y = positions[index].y;
+
+        //skips the unsupported object and moves to the next iteration.
+        if (!drawings[shape]) {
+            continue;
+        }
+
+        if (shape === "ball") {
+            drawBall(color, x, y);
+        } else if (shape === "house") {
+            drawHouse(color, x - 50, y - 50);
+        } else if (shape === "tree") {
+            drawTree(color, x - 50, y - 100);
+        } else if (shape === "star") {
+            drawStar(color, x - 250, y - 180);
+        }
+
+        displayedObjects.push(color + " " + shape);
     }
+
+    if (limitReached) {
+        message.textContent = "WISH can draw up to 4 objects at a time.";
+    } else if (displayedObjects.length > 0) {
+        message.textContent = "WISH drew: " + displayedObjects.join(" and ");
+    } else {
+        message.textContent = "Sorry, WISH doesn't support these objects yet.";
+    }
+
 }
+
 
 
 //calling the createObject() on click of the btn 
@@ -116,13 +167,13 @@ document.getElementById("createObjectBtn").addEventListener("click", createObjec
 
 
 //DRAW A CIRCLE
-function drawBall(color) {
+function drawBall(color, x, y) {
 
     //Starts a new drawing path. does not prevent shapes from overlapping. It starts a new drawing path so that the new shape can be handled independently.
     ctx.beginPath();
 
     //Math.PI)	Defines a circle centred at (200, 200) with a radius of 60 pixels. 2 * Math.PI represents a full circle in radians, approximately 6.283.
-    ctx.arc(200, 200, 60, 0, 2 * Math.PI);
+    ctx.arc(x, y, 60, 0, 2 * Math.PI);
 
     //Sets the fill colour to blue. As its default color is black
     ctx.fillStyle = color;
@@ -137,55 +188,57 @@ lineTo(x, y) draws a line to the next point.
 closePath() connects the final point to the starting point.
 Notice the order: we draw the roof first, then the house's body. Both shapes meet at y = 60.
 */
-function drawHouse(color= "blue") {
+
+function drawHouse(color = "blue", x = 0, y = 0) {
     // Draw the roof
     ctx.beginPath();
-    ctx.moveTo(50, 20);   // Top of roof
-    ctx.lineTo(0, 60);   // Left corner
-    ctx.lineTo(100, 60);   // Right corner
+    ctx.moveTo(x + 50, y + 20);
+    ctx.lineTo(x + 0, y + 60);
+    ctx.lineTo(x + 100, y + 60);
     ctx.closePath();
     ctx.fillStyle = "#b29173";
     ctx.fill();
 
     // Draw the body of the house
     ctx.fillStyle = color;
-    //fillRect() already draws and fills the rectangle in one operation.
-    ctx.fillRect(10, 60, 80, 40);
+    ctx.fillRect(x + 10, y + 60, 80, 40);
 
-    // Draw the door of the house
+    // Draw the door
     ctx.fillStyle = "#1697a1";
-    ctx.fillRect(50, 75, 20, 25);
+    ctx.fillRect(x + 50, y + 75, 20, 25);
 
-    //add window
+    // Draw the window
     ctx.fillStyle = "#f6eeee";
-    ctx.fillRect(22, 65, 15, 15);
+    ctx.fillRect(x + 22, y + 65, 15, 15);
 }
 
-function drawTree(color="green") {
 
-    //Green triangular canopy
+
+function drawTree(color = "green", x = 0, y = 0) {
+
+    // Triangular canopy
     ctx.beginPath();
-    ctx.moveTo(50, 50);
-    ctx.lineTo(10, 150);
-    ctx.lineTo(90, 150);
+    ctx.moveTo(x + 50, y + 50);
+    ctx.lineTo(x + 10, y + 150);
+    ctx.lineTo(x + 90, y + 150);
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
 
-    //Brown rectangular trunk
+    // Rectangular trunk
     ctx.fillStyle = "#b6350a";
-    ctx.fillRect(40, 150, 20, 70)
-
+    ctx.fillRect(x + 40, y + 150, 20, 70);
 }
 
-function drawStar(color="yellow") {
+
+function drawStar(color = "yellow", x = 0, y = 0) {
 
     ctx.beginPath();
-    ctx.moveTo(200, 100);
-    ctx.lineTo(225, 175);
-    ctx.lineTo(300, 175);
-    ctx.lineTo(240, 220);
-    ctx.lineTo(260, 290);
+    ctx.moveTo(x + 200, y + 100);
+    ctx.lineTo(x + 225, y + 175);
+    ctx.lineTo(x + 300, y + 175);
+    ctx.lineTo(x + 240, y + 220);
+    ctx.lineTo(x + 260, y + 290);
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
