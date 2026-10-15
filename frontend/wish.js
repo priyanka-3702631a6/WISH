@@ -6,7 +6,6 @@ const drawings = {
     star: drawStar
 };
 
-
 const objectInput = document.getElementById("takeObject");
 const message = document.getElementById("message");
 
@@ -71,16 +70,41 @@ function createObject() {
     }
 }
 
-function displayObject(objectName) {
-    const drawFunction = drawings[objectName];
 
-    if (drawFunction !== undefined) {
+function interpretObject(objectName) {
+    const parts = objectName.split(" ");
+    const colors = ["blue", "red", "green", "yellow", "purple"];
+
+    let color = "blue";
+    let shape = objectName;
+
+    if (colors.includes(parts[0])) {
+        color = parts[0];
+        shape = parts.slice(1).join(" ");
+    }
+
+    return {
+        object: shape,
+        color: color
+    };
+}
+
+
+
+function displayObject(objectName) {
+    const instructions = interpretObject(objectName);
+
+    const shape = instructions.object;
+    const color = instructions.color;
+
+    if (drawings[shape] !== undefined) {
         message.textContent = "Backend received: " + objectName;
-        drawFunction();
+        drawings[shape](color);
     } else {
         message.textContent = "Sorry, WISH doesn't support this object yet.";
     }
 }
+
 
 //calling the createObject() on click of the btn 
 document.getElementById("createObjectBtn").addEventListener("click", createObject);
@@ -88,7 +112,7 @@ document.getElementById("createObjectBtn").addEventListener("click", createObjec
 
 
 //DRAW A CIRCLE
-function drawBall() {
+function drawBall(color) {
 
     //Starts a new drawing path. does not prevent shapes from overlapping. It starts a new drawing path so that the new shape can be handled independently.
     ctx.beginPath();
@@ -97,7 +121,7 @@ function drawBall() {
     ctx.arc(200, 200, 60, 0, 2 * Math.PI);
 
     //Sets the fill colour to blue. As its default color is black
-    ctx.fillStyle = "blue";
+    ctx.fillStyle = color;
 
     //Fills the circle using that colour.
     ctx.fill();
@@ -109,7 +133,7 @@ lineTo(x, y) draws a line to the next point.
 closePath() connects the final point to the starting point.
 Notice the order: we draw the roof first, then the house's body. Both shapes meet at y = 60.
 */
-function drawHouse() {
+function drawHouse(color= "blue") {
     // Draw the roof
     ctx.beginPath();
     ctx.moveTo(50, 20);   // Top of roof
@@ -120,7 +144,7 @@ function drawHouse() {
     ctx.fill();
 
     // Draw the body of the house
-    ctx.fillStyle = "#edbe93";
+    ctx.fillStyle = color;
     //fillRect() already draws and fills the rectangle in one operation.
     ctx.fillRect(10, 60, 80, 40);
 
@@ -133,7 +157,7 @@ function drawHouse() {
     ctx.fillRect(22, 65, 15, 15);
 }
 
-function drawTree() {
+function drawTree(color="green") {
 
     //Green triangular canopy
     ctx.beginPath();
@@ -141,7 +165,7 @@ function drawTree() {
     ctx.lineTo(10, 150);
     ctx.lineTo(90, 150);
     ctx.closePath();
-    ctx.fillStyle = "#0ce10c";
+    ctx.fillStyle = color;
     ctx.fill();
 
     //Brown rectangular trunk
@@ -150,7 +174,7 @@ function drawTree() {
 
 }
 
-function drawStar() {
+function drawStar(color="yellow") {
 
     ctx.beginPath();
     ctx.moveTo(200, 100);
@@ -159,6 +183,6 @@ function drawStar() {
     ctx.lineTo(240, 220);
     ctx.lineTo(260, 290);
     ctx.closePath();
-    ctx.fillStyle = "#c1e10c";
+    ctx.fillStyle = color;
     ctx.fill();
 }
