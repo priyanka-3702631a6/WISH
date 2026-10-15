@@ -78,9 +78,13 @@ function interpretObject(objectName) {
     let color = "blue";
     let shape = objectName;
 
-    if (colors.includes(parts[0])) {
-        color = parts[0];
-        shape = parts.slice(1).join(" ");
+    //findIndex() searches for a recognized color anywhere in the input,
+    const colorIndex = parts.findIndex(part => colors.includes(part));
+
+    if (colorIndex !== -1) {
+        color = parts[colorIndex];
+        //filter() removes color[] words to leave the object name.
+        shape = parts.filter(part => !colors.includes(part)).join(" ");
     }
 
     return {
