@@ -71,27 +71,39 @@ function createObject() {
 }
 
 
+
 function interpretObject(objectName) {
     const parts = objectName.split(" ");
     const colors = ["blue", "red", "green", "yellow", "purple"];
+    const sizes = ["small", "big"];
 
     let color = "blue";
+    let size = "normal";
     let shape = objectName;
 
-    //findIndex() searches for a recognized color anywhere in the input,
     const colorIndex = parts.findIndex(part => colors.includes(part));
 
     if (colorIndex !== -1) {
         color = parts[colorIndex];
-        //filter() removes color[] words to leave the object name.
-        shape = parts.filter(part => !colors.includes(part)).join(" ");
     }
+    //finds a size word anywhere in the description
+    const sizeIndex = parts.findIndex(part => sizes.includes(part));
+
+    if (sizeIndex !== -1) {
+        size = parts[sizeIndex];
+    }
+    //removes both color and size words, leaving the shape name.
+    shape = parts.filter(part =>
+        !colors.includes(part) && !sizes.includes(part)
+    ).join(" ");
 
     return {
         object: shape,
-        color: color
+        color: color,
+        size: size
     };
 }
+
 
 
 function interpretDescription(description) {
@@ -137,13 +149,13 @@ function displayObject(objectName) {
         }
 
         if (shape === "ball") {
-            drawBall(color, x, y);
+            drawBall(color, x, y, item.size);
         } else if (shape === "house") {
-            drawHouse(color, x - 50, y - 50);
+            drawHouse(color, x - 50, y - 50, item.size);
         } else if (shape === "tree") {
-            drawTree(color, x - 50, y - 100);
+            drawTree(color, x - 50, y - 100, item.size);
         } else if (shape === "star") {
-            drawStar(color, x - 250, y - 180);
+            drawStar(color, x - 250, y - 180,item.size);
         }
 
         displayedObjects.push(color + " " + shape);
@@ -167,13 +179,21 @@ document.getElementById("createObjectBtn").addEventListener("click", createObjec
 
 
 //DRAW A CIRCLE
-function drawBall(color, x, y) {
+function drawBall(color, x, y, size = "normal") {
 
     //Starts a new drawing path. does not prevent shapes from overlapping. It starts a new drawing path so that the new shape can be handled independently.
     ctx.beginPath();
 
+    let radius = 60;
+
+    if (size === "small") {
+        radius = 30;
+    } else if (size === "big") {
+        radius = 85;
+    }
+
     //Math.PI)	Defines a circle centred at (200, 200) with a radius of 60 pixels. 2 * Math.PI represents a full circle in radians, approximately 6.283.
-    ctx.arc(x, y, 60, 0, 2 * Math.PI);
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
 
     //Sets the fill colour to blue. As its default color is black
     ctx.fillStyle = color;
@@ -189,57 +209,108 @@ closePath() connects the final point to the starting point.
 Notice the order: we draw the roof first, then the house's body. Both shapes meet at y = 60.
 */
 
-function drawHouse(color = "blue", x = 0, y = 0) {
+
+function drawHouse(color = "blue", x = 0, y = 0, size = "normal") {
+    let scale = 1;
+
+    if (size === "small") {
+        scale = 0.6;
+    } else if (size === "big") {
+        scale = 1.3;
+    }
+
     // Draw the roof
     ctx.beginPath();
-    ctx.moveTo(x + 50, y + 20);
-    ctx.lineTo(x + 0, y + 60);
-    ctx.lineTo(x + 100, y + 60);
+    ctx.moveTo(x + 50 * scale, y + 20 * scale);
+    ctx.lineTo(x, y + 60 * scale);
+    ctx.lineTo(x + 100 * scale, y + 60 * scale);
     ctx.closePath();
     ctx.fillStyle = "#b29173";
     ctx.fill();
 
-    // Draw the body of the house
+    // Draw the body
     ctx.fillStyle = color;
-    ctx.fillRect(x + 10, y + 60, 80, 40);
+    ctx.fillRect(
+        x + 10 * scale,
+        y + 60 * scale,
+        80 * scale,
+        40 * scale
+    );
 
     // Draw the door
     ctx.fillStyle = "#1697a1";
-    ctx.fillRect(x + 50, y + 75, 20, 25);
+    ctx.fillRect(
+        x + 50 * scale,
+        y + 75 * scale,
+        20 * scale,
+        25 * scale
+    );
 
     // Draw the window
     ctx.fillStyle = "#f6eeee";
-    ctx.fillRect(x + 22, y + 65, 15, 15);
+    ctx.fillRect(
+        x + 22 * scale,
+        y + 65 * scale,
+        15 * scale,
+        15 * scale
+    );
 }
 
 
 
-function drawTree(color = "green", x = 0, y = 0) {
+function drawTree(color = "green", x = 0, y = 0, size = "normal") {
+    let scale = 1;
+
+    if (size === "small") {
+        scale = 0.6;
+    } else if (size === "big") {
+        scale = 1.3;
+    }
 
     // Triangular canopy
     ctx.beginPath();
-    ctx.moveTo(x + 50, y + 50);
-    ctx.lineTo(x + 10, y + 150);
-    ctx.lineTo(x + 90, y + 150);
+    ctx.moveTo(x + 50 * scale, y + 50 * scale);
+    ctx.lineTo(x + 10 * scale, y + 150 * scale);
+    ctx.lineTo(x + 90 * scale, y + 150 * scale);
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
 
     // Rectangular trunk
     ctx.fillStyle = "#b6350a";
-    ctx.fillRect(x + 40, y + 150, 20, 70);
+    ctx.fillRect(
+        x + 40 * scale,
+        y + 150 * scale,
+        20 * scale,
+        70 * scale
+    );
 }
 
 
-function drawStar(color = "yellow", x = 0, y = 0) {
+
+
+
+function drawStar(color = "yellow", x = 0, y = 0, size = "normal") {
+    let scale = 1;
+
+    if (size === "small") {
+        scale = 0.6;
+    } else if (size === "big") {
+        scale = 1.3;
+    }
 
     ctx.beginPath();
-    ctx.moveTo(x + 200, y + 100);
-    ctx.lineTo(x + 225, y + 175);
-    ctx.lineTo(x + 300, y + 175);
-    ctx.lineTo(x + 240, y + 220);
-    ctx.lineTo(x + 260, y + 290);
+    ctx.moveTo(x + 250, y + 100);
+    ctx.lineTo(x + 250 + 25 * scale, y + 100 + 75 * scale);
+    ctx.lineTo(x + 250 + 100 * scale, y + 100 + 75 * scale);
+    ctx.lineTo(x + 250 + 40 * scale, y + 100 + 120 * scale);
+    ctx.lineTo(x + 250 + 60 * scale, y + 100 + 190 * scale);
     ctx.closePath();
+
     ctx.fillStyle = color;
     ctx.fill();
 }
+
+
+
+
